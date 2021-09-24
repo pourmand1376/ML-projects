@@ -1,0 +1,318 @@
+\documentclass{article}[12pt]
+\usepackage{graphicx}
+
+\usepackage{minted}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{xepersian}
+\settextfont[Scale=1]{IRXLotus}
+\setlatintextfont[Scale=0.8]{Times New Roman}
+
+\DeclareRobustCommand{\bbone}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+
+
+\title{  \includegraphics[scale=0.35]{../../Images/logo.png} \\
+    دانشکده مهندسی کامپیوتر
+    \\
+    دانشگاه صنعتی شریف
+}
+\author{استاد درس: دکتر محمدحسین رهبان}
+\date{بهار ۱۴۰۰}
+
+
+
+\def \Subject {
+گزارش فاز اول پروژه یادگیری ماشین
+}
+\def \Course {
+درس یادگیری ماشین
+}
+\def \Author {
+نام و نام خانوادگی:
+امیر پورمند}
+\def \Email {\lr{pourmand1376@gmail.com}}
+\def \StudentNumber {99210259}
+
+
+\begin{document}
+
+
+ \maketitle
+ 
+\begin{center}
+\vspace{.4cm}
+{\bf {\huge \Subject}}\\
+{\bf \Large \Course}
+\vspace{.8cm}
+
+{\bf \Author}
+
+\vspace{0.3cm}
+
+{\bf شماره دانشجویی: \StudentNumber}
+
+\vspace{0.3cm}
+
+آدرس ایمیل
+{\bf \Email}
+\end{center}
+
+
+\clearpage
+
+
+\tableofcontents
+\clearpage
+\section{پیش پردازش}
+
+\subsection{توابع پیش پردازش}
+با توجه به نتایج بدست آمده عملا پیش پردازش داده ها تاثیر چندان زیادی در نتیجه ندارد که بر خلاف انتظار اولیه بنده است. 
+با این تفاسیر توضیح برخی کدهای بنده خالی از لطف نیست. 
+
+در این تابع تمام حرف های غیرالفبا با یک رجکس ساده حذف می شوند. 
+\begin{minted}{python}
+def remove_all_non_alphabetic(text):
+  return re.sub('[^A-Za-z]',' ',text)
+\end{minted}
+
+در این تابع تگ های html که ممکن است در متن وجود داشته باشند همگی حذف میشوند. 
+\begin{minted}{python}
+def strip_html_tags(text):
+    """remove html tags from text"""
+    soup = BeautifulSoup(text, "html.parser")
+    stripped_text = soup.get_text(separator=" ")
+    return stripped_text
+\end{minted}
+
+در اینجا کلمات 
+\lr{stop word}
+انگلیسی حذف میشوند که در واقع از یک دیکشنری انگلیسی با استفاده از کتابخانه استخراج شده اند. 
+\begin{minted}{python}
+stop_words = set(stopwords.words('english'))
+def remove_stop_words(token):
+  return [item for item in token if item not in stop_words]
+\end{minted}
+
+بنده از بین دو تابع stemmatization و 
+lemmatization 
+در واقع lemmatization را انتخاب کردم. علت انتخاب هم بود که به نظرم منطقی تر است. 
+\begin{minted}{python}
+lemma = WordNetLemmatizer()
+def lemmatization(token):
+  return [lemma.lemmatize(word=w,pos='v') for w in token]
+\end{minted}
+
+در اینجا هم صرفا یک تابع برای حذف کلمات کوچکتر از ۲ حرف نوشتم که واقعا ساده است. 
+\begin{minted}{python}
+def clean_length(token):
+  return [item for item in token if len(item)>2]
+\end{minted}
+
+برای حذف نقطه و ویرگول و کاما و بقیه علائم نگارشی نوشته شده است که البته تاثیر زیادی هم نداشت. 
+\begin{minted}{python}
+def punctuation_removal(text):
+    return re.sub(r'[\.\?\!\,\:\;\"]', '', text)
+\end{minted}
+
+این تابع هم برای جوین کردن متن tokenize شده مورد استفاده است. 
+\begin{minted}{python}
+def text_merge(token):
+  return ' '.join([i for i in token if not i.isdigit()])
+\end{minted}
+
+در نهایت هم با استفاده از تابع زیر پیش پردازش کلیه متن ها را انجام داده ام. لازم به ذکر است که ۳ متغیر مستقل از هم برای نگه داشتن پیش پردازش های مختلف در فایل وجود دارد که با عدد انتهایی صفر و یک و دو نشان داده شده اند. یعنی 
+\lr{X\_train\_0}
+به معنای داده پیش پردازش نشده است. 
+\lr{X\_train\_1 }
+به معنای داده ای هست که مرحله اول پیش پردازش روی آن انجام شده است و نهایتا 
+\lr{X\_train\_2}
+داده ای هست که تمام پیش پردازش های مدنظر بنده رو آن اعمال شده است. 
+
+\begin{minted}{python}
+def process_level1(data):
+    return (data.apply(str.lower)
+                .apply(remove_all_non_alphabetic)
+                .apply(word_tokenize)
+                .apply(text_merge))
+
+def process_level2(data):
+    return (data.apply(str.lower)
+        .apply(contractions.fix)
+        .apply(strip_html_tags)
+        .apply(remove_accented_chars)
+        .apply(remove_all_non_alphabetic)
+        .apply(word_tokenize)
+        .apply(remove_stop_words)
+        .apply(lemmatization)
+        .apply(clean_length)
+        .apply(text_merge))
+\end{minted}
+
+\subsection{پیاده سازی BOW}
+
+برای پیاده سازی روش Bag of Wordsکه در این فایل اختصارا به BOW میشناسم از فایل CountVectorizer 
+کتابخانه sklearn استفاده شده است. نکته مهم در این کتابخانه دو پارامتر 
+\lr{max\_df}
+و 
+\lr{min\_df}
+است که برای این که همه کلمات تبدیل نشوند استفاده شده است. برای مثال بنده میخواستم کلماتی که در زیر ۱ درصد کامنت ها موجود است و البته در بالای ۴۰ درصد کامنت ها وجود دارد حذف شود زیرا این کلمات یا خیلی نادر هستند و یا خیلی پرتکرار هستند و تفاوت زیادی در پیش بینی ایجاد نمیکنند. 
+
+در ضمن در روش SVM 
+بدون وجود این پارامترها دقت بسیار بد بود (
+در حد ۵۰ درصد)
+ولی با این روش نزدیک ۸۸ درصد جواب داده است. 
+
+
+\begin{minted}{python}
+def convert_to_BOW(train,test):
+    vectorizer = CountVectorizer(max_df=0.4,min_df=0.01,lowercase=False)
+    X_train_transformed = vectorizer.fit_transform(train)
+    X_test_transformed = vectorizer.transform(test)
+    return X_train_transformed,X_test_transformed
+\end{minted}
+
+\subsection{نتیجه LR}
+برای رگرسیون خطی از کد زیر استفاده کردم و پارامترها را پاس داده ام که البته همان طور که در شکل ها مشخص است تغییر به خصوصی در پیش پردازش ها بوجود نیامده است و همه دقت ها و معیارها ۸۸ درصد است و تقریبا در همگی برابر است. 
+\begin{minted}{python}
+from sklearn.linear_model import LogisticRegression
+def regression(X_train,X_test,y_train,**kwarg):
+    clf = LogisticRegression(**kwarg).fit(X_train, y_train)
+    return clf.predict(X_test),clf
+\end{minted}
+
+
+\subsection{نتیجه KNN}
+در مورد KNN اما موضوع قدری متفاوت است و دقت ها به ترتیب در هر مرحله پیش پردازش ۲ درصد زیاد شده اند که به نسبت بسیار خوب است. 
+(دقت ها به ترتیب ۶۳، ۶۵ و ۶۷ برای داده های بدون پیش پردازش و داده های با پیش پردازش اولیه و داده های با پیش پردازش کامل هستند)
+
+در پیاده سازی این تابع نیز همانند بقیه از کتابخانه آماده sklearn استفاده شده است. 
+\begin{minted}{python}
+from sklearn.neighbors import KNeighborsClassifier
+def knn(X_train,X_test,y_train):
+    neigh = KNeighborsClassifier(n_neighbors=5)
+    neigh.fit(X_train, y_train)
+    return neigh.predict(X_test),neigh
+\end{minted}
+\subsection{نتیجه SVM}
+
+در مورد SVM مانند روش LR دقت ها در هر ۳ پیش پردازش ۸۶ درصد است. این روش بیشترین زمان را برای ترین کردن به خود اختصاص داد. 
+\begin{minted}{python}
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+def svm(X_train,X_test,y_train):
+    clf = make_pipeline( SVC(gamma='auto'))
+    clf.fit(X_train, y_train)
+    return clf.predict(X_test),clf
+\end{minted}
+\clearpage
+\section{روش های مختلف بردار سازی }
+\subsection{معرفی}
+به طور کلی در اینجا من از ۳ روش بردار سازی استفاده کردم که عبارتند از 
+\lr{ Bag of Words},
+\lr{ Word to Vector} و
+\lr{TF-IDF}.
+
+روش BOW را که در فاز قبل توضیح داده ام. در اینجا روش W2v
+را توضیح میدهم و tf-idf را در قسمت بعدی به همراه MLP توضیح میدهم. 
+
+
+در این روش هر کلمه به یک بردار تبدیل میشود که لزوما با کلماتی که شباهت زیادی به هم دارند بردارهای نزدیکی دارند و به سادگی میتوان ارتباط بین کلمات مختلف را مشاهده کرد. 
+\begin{minted}{python}
+import gensim.models
+w2v = gensim.models.Word2Vec( [row.split() for row in X_train_2], 
+                             min_count=50,
+                            window=10, 
+                            size=300)
+\end{minted}
+برای مثال در اینجا بنده یک مثال برای کلمه king یا همان پادشاه زده ام که ببینیم کدام کلمات به آن نزدیک تر هستند. 
+
+\begin{minted}{python}
+w2v.most_similar('king')
+output:
+[('lion', 0.7712827324867249),
+ ('stephen', 0.7464975118637085),
+ ('solomon', 0.7280431985855103),
+ ('lord', 0.706125020980835),
+ ('legend', 0.6681618094444275),
+ ('princess', 0.6676332950592041),
+ ('kings', 0.6650164127349854),
+ ('rice', 0.6360715627670288),
+ ('queen', 0.6311061978340149),
+ ('immortal', 0.6231356859207153)]
+\end{minted}
+برای تبدیل کردن جملات به بردار هم از تابع زیر استفاده کرده ام
+
+\begin{minted}{python}
+def document_vector(doc):
+    doc = [word for word in doc.split() if word in w2v.wv.vocab]
+    return np.mean(w2v[doc], axis=0)
+    \end{minted}
+    
+\subsection{مقایسه روش های بردارهای سازی مختلف}
+
+\begin{table}[!hbtp]
+\centering
+\caption{مقایسه روش های مختلف بردار سازی }
+\label{tab:compare}
+\begin{tabular}{cccc}
+\hline
+روش های مختلف & LR & KNN & SVM \\ \hline
+BOW           & 87 & 67  & 87  \\ \hline
+W2V           & 87 & 82  & 87 
+\end{tabular}
+\end{table}
+همان طور که مشخص است برای دو روش LR و SVM روش بردار سازی هیچ تفاوتی ندارند اما برای KNN تفاوت مشهود است. 
+البته میتوان گفت در کل برای این تسک دو روش LR و SVM بهتر هستند و البته LR به نظر بنده بهتر از SVM میتواند باشد زیرا زمان آموزش بسیار بسیار کمتری نیاز دارد. 
+
+
+\section{پیاده سازی مدل MLP}
+\subsection{توضیح روش TF-IDF}
+
+در این روش نیز با استفاده از کتابخانه sklearn کلمات شمرده میشوند و نسبت آنها به کل کلمات با توجه به فرمولی در نظر گرفته میشود که با توجه به این که همین معیار در موتورهای جستجوگر نیز استفاده میشود فکر کردم بد نیست آن را پیاده سازی کنم. 
+البته باز هم به علت زیاد بودن کلمات اضافی
+، کلماتی که زیر ۱ درصد تکرار شده اند و انهایی که بالای ۵۰ درصد تکرار شده اند حذف شده اند تا نتیجه بهتری بتوان گرفت. 
+\begin{minted}{python}
+from sklearn.feature_extraction.text import TfidfVectorizer
+vectorizer = TfidfVectorizer( min_df=0.01,max_df=0.5)
+X_train_2_tfidf=vectorizer.fit_transform(X_train_2)
+X_test_2_tfidf = vectorizer.transform(X_test_2)
+\end{minted}
+
+\subsection{توضیح روش MLP}
+
+اولا در اینجا از cross-validation 
+استفاده شده است تا بتوان نتیجه قابل اتکا تری گرفت و همان طور که مشخص است مدل ها با تعداد لایه های مختلف با fold=2 تست شده اند .
+\begin{minted}{python}
+grid = {
+    'hidden_layer_sizes':[(80),(70,),(40,10),(90)],
+}
+mlp = MLPClassifier(learning_rate='adaptive',solver='adam')
+mlp_cv = GridSearchCV (estimator=mlp,param_grid=grid,cv=2)
+\end{minted}
+
+سپس خود مدل ترین شده است که دقت ۸۷ درصد را روی داده های تست بدست آورده است. 
+
+\begin{minted}{python}
+mlp_cv.fit(X_train_2_tfidf,y_train)
+
+mlp_prediction=mlp_cv.predict(X_test_2_tfidf)
+print_confusion_matrix(y_test,mlp_prediction,'TFIDF: MLP ')
+\end{minted}
+
+\section{مدل های آموزش داده شده}
+
+در 
+\href{https://drive.google.com/drive/folders/1D5jG-peWyejoISFjyc0e8d_Y44frkL7f?usp=sharing}{این لینک}
+تمام مدل های اموزش دیده شده قرار دارد. البته قبلا فایل ها با ایمیل های گفته شده در اشتراک گذاشته شده است. این فولدر علاوه بر چیزهای خواسته شده فایل داده های پردازش شده در هر مرحله را نیز در بردارد که به سادگی قابل تست و بررسی است. 
+
+در 
+\href{https://colab.research.google.com/drive/1sJm7jiWMMvYRwHK2Ibltt_kKa776yOrU?usp=sharing}{این لینک}
+نیز فایل کولب برای این پروژه قرار دارد که میتواند در صورت نیاز بررسی شود. 
+\end{document}

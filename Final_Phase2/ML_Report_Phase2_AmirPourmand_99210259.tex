@@ -1,0 +1,239 @@
+\documentclass{article}[12pt]
+\usepackage{graphicx}
+
+\usepackage{minted}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{xepersian}
+\settextfont[Scale=1]{IRXLotus}
+\setlatintextfont[Scale=0.8]{Times New Roman}
+
+\DeclareRobustCommand{\bbone}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+
+
+\title{  \includegraphics[scale=0.35]{../../Images/logo.png} \\
+    دانشکده مهندسی کامپیوتر
+    \\
+    دانشگاه صنعتی شریف
+}
+\author{استاد درس: دکتر محمدحسین رهبان}
+\date{بهار ۱۴۰۰}
+
+
+
+\def \Subject {
+گزارش فاز دوم پروژه یادگیری ماشین
+}
+\def \Course {
+درس یادگیری ماشین
+}
+\def \Author {
+نام و نام خانوادگی:
+امیر پورمند}
+\def \Email {\lr{pourmand1376@gmail.com}}
+\def \StudentNumber {99210259}
+
+
+\begin{document}
+
+
+ \maketitle
+ 
+\begin{center}
+\vspace{.4cm}
+{\bf {\huge \Subject}}\\
+{\bf \Large \Course}
+\vspace{.8cm}
+
+{\bf \Author}
+
+\vspace{0.3cm}
+
+{\bf شماره دانشجویی: \StudentNumber}
+
+\vspace{0.3cm}
+
+آدرس ایمیل
+{\bf \Email}
+\end{center}
+
+
+\clearpage
+
+
+\tableofcontents
+\clearpage
+\section{مسئله واکاوی خوشه ها}
+
+\subsection{روش های کاهش بعد}
+\subsection{PCA}
+
+روش کاهش بعد PCA برای تبدیل داده ها به ابعاد پایین تر مورد استفاده قرار گرفته است که مشخص است با استفاده از کتابخانه sklearn از آن استفاده  شده است. دقت کنیم که این تابع روی کل مجموعه train و test ترکیب شده با بازنمایی w2v  انجام شده است. 
+
+\begin{minted}{python}
+from sklearn.decomposition import PCA
+pca=PCA(n_components=2)
+pca_w2v=pca.fit_transform(X_w2v)
+\end{minted}
+\subsection{SVD}
+این روش نیز برای سادگی پیاده سازی انجام شده است و در واقع BOW کلمات را به SVD تبدیل کرده ایم و این برای مقاصد خوشه بندی قابل استفاده است. تمام ۳ الگوریتم استفاده شده با هر دوش روش مقایسه شده اند که البته روش w2v بهتر عملکرده است. 
+
+\begin{minted}{python}
+from sklearn.decomposition import TruncatedSVD
+svd = TruncatedSVD(n_components=2, n_iter=7)
+svd_bow=svd.fit_transform(X_bow)
+\end{minted}
+\subsection{روش های خوشه بندی}
+\subsubsection{روش KMeans}
+در ابتدای امر معرفی یک تابع که در روند کار برای plot کردن کلاسترهای مختلف به کار میرود را معرفی میکنم.  
+\begin{minted}{python}
+import matplotlib.pyplot as plt
+def plot_scatter(X,pred):
+    u_labels = np.unique(pred)
+    for i in u_labels:
+        plt.scatter(X[pred==i,0],X[pred==i,1],label=i)
+    plt.legend()
+    plt.show()
+\end{minted}
+
+
+ما در اینجا از Kmeans با ۲ تا ۶ کلاستر استفاده کرده ایم و هر کدام رو plot کرده ایم ولی به علت این که نمیخوام کل این فایل پر از شکل شود و در واقع تکرار چیزهایی که قبلا در فایل نوت بوک بوده است به صرفا کد و توضیح ان بسنده میکنم. 
+البته در اینجا از همان representation 
+مبتنی بر word2vec استفاده شده است ولی چون در کلاسترینگ اصولا جداکردن داده تست و ترین معنی ندارد، این داده ها را در واقع ترکیب کرده و ترکیب آنها استفاده میکنیم. 
+\begin{minted}{python}
+from sklearn.cluster import KMeans
+
+for k in range(2,6):
+    kmeans = KMeans(n_clusters=k)
+    kmeans_label=kmeans.fit_predict(pca_w2v)
+    plot_scatter(pca_w2v,kmeans_label)
+\end{minted}
+
+\subsubsection{\lr{Gaussian Mixture Model}}
+این روش نیز به گفته سوال پیاده سازی شده است که البته نتایج بهتری نسبت به روش kmeans دارد. اگر در شکل هم نگاه کنیم نتایجش قابل قبول است.
+
+\begin{minted}{python}
+from sklearn.mixture import GaussianMixture
+
+for k in range(2,6):
+    gm = GaussianMixture(n_components=k)
+    gm_pred=gm.fit_predict(pca_w2v)
+    plot_scatter(pca_w2v,gm_pred)
+\end{minted}
+\subsubsection{\lr{Agglomerative Clustering }}
+
+با توجه به این که در منابع مختلفی این روش را دیده بودم فکر میکردم خیلی خیلی خوب عمل خواهد کرد که متاسفانه در اینجا عملکرد خیلی خوبی نداشت. البته در جدول sklearn نیز بیان شده است که برای داده های با همین مشخصات خوب خواهد بود ولی خوب نبود! 
+و چون در کولب اگر با کل داده ها ترین میکردم کرش میکرد مجبور شدم صرفا سی هزار داده را انتخاب و از بین آنها خوشه بندی را انجام دهم. البته چند روش دیگر را هم پیدا کردم و آنها نیز همگی کرش کردند. (رم کم میآوردند. )
+
+\begin{minted}{python}
+from sklearn.cluster import AgglomerativeClustering
+
+max_data= 30000
+for k in range(2,6):
+    agg = AgglomerativeClustering(n_clusters=k)
+    agg_pred=agg.fit_predict(pca_w2v[:max_data])
+    plot_scatter(pca_w2v[:max_data],agg_pred)
+\end{minted}
+
+\subsection{مقایسه روش های خوشه بندی با ۲ دسته}
+برای مقایسه روش های مختلف خوشه بندی از تابع زیر استفاده کردم که در واقع ۵ معیار مختلف برای خوشه بندی است. 
+\begin{minted}{python}
+from sklearn import metrics
+
+def get_analysis(name,
+true_label,predicted_label):
+    print('V Measure ', name,
+    ':', metrics.v_measure_score(true_label,predicted_label))
+    print('Adjusted RandScore Measure ', name,
+     ':', metrics.adjusted_rand_score(true_label,predicted_label))
+    print('Adjusted Mutual Information ', name, 
+    ':', metrics.adjusted_mutual_info_score(true_label,predicted_label))
+    print('Homogenity', name,
+     ':', metrics.homogeneity_score(true_label,predicted_label))
+    print('-'*30)
+\end{minted}
+
+در اینجا نیز با توجه به معیارهای بدست آمده که همگی مشخص هستند بهترین نتیجه از آن GMM و سپس KMeans و سپس 
+agglomorative  
+است . 
+
+\begin{minted}{python}
+V Measure  kmeans : 0.03865260111674556
+Adjusted RandScore Measure  kmeans : 0.052532117323756226
+Adjusted Mutual Information  kmeans : 0.038637148304102975
+Homogenity kmeans : 0.038548295065080805
+------------------------------
+V Measure  gm : 0.04585216408127864
+Adjusted RandScore Measure  gm : 0.06102151128817464
+Adjusted Mutual Information  gm : 0.045836750679784814
+Homogenity gm : 0.045502049103971876
+------------------------------
+V Measure  agg : 0.027294842860872137
+Adjusted RandScore Measure  agg : 0.015243361512629535
+Adjusted Mutual Information  agg : 0.02726576198577149
+Homogenity agg : 0.021955360291170237
+------------------------------
+\end{minted}
+
+\subsection{مقایسه مفهوم دسته های مختلف }
+
+در اینجا بنده ۳ دسته را در نظر گرفتم و سعی کردم هر کدام را بصورت شهودی تحلیل کنم و به این نتیجه رسیدم که در واقع دسته اول نظرات خیلی منفی را در بردارد و دسته دوم اکثرا نظرات خیلی مثبت را دارد و در واقع دسته سوم نیز نظراتی را مطرح میکند که خوب هستند ولی خیلی زیاد تعریف نمیکنند و میتوان گفت به نوعی به هر دو دسته میتوانند تعلق داشته باشند. 
+
+\begin{minted}{python}
+gm = GaussianMixture(n_components=3)
+gm_pred=gm.fit_predict(pca_w2v)
+for i in range(3):
+    print(list(dataset[gm_pred==i][2:3]['sentiment']))
+for i in range(3):
+    print(list(dataset[gm_pred==i][2:3]['comment']))
+\end{minted}
+\clearpage
+\section{مسئله Fine-tuning}
+
+\subsection{پیاده سازی MLP روی دیتاست}
+در اینجا بنده دوباره تمام پیش پردازش هایی که در مرحله قبل انجام شده بود را انجام دادم و از روش TF-IDF برای تبدیل کلمات به بردار استفاده کردم که قبلا توضیح آن در گزارش فاز دوم آماده است. 
+
+یک GridSearch نیز برای تنظیم دقیق تر پارامترها در cross-validation انجام شده است که مشخص است که بهترین مدل، آن مدلی است که از ۱ لایه استفاده کرده است که در ان ۹۰ نورون وجود دارد. 
+سپس همین مدل فیت شده است و دقت 88 درصدی را از آن خود کرده است.
+\begin{minted}{python}
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import GridSearchCV
+grid_params = {
+    'hidden_layer_sizes':[(250),(100),(90),(40,10),(50,10)]
+}
+mlp = MLPClassifier(learning_rate='adaptive',solver='adam',max_iter=1000)
+mlp_cv = GridSearchCV(estimator=mlp,param_grid=grid_params,cv=2)
+mlp_cv.fit(X_train_small_tfidf,y_train_small)
+mlp_prediction=mlp_cv.predict(X_test_small_tfidf)
+print_confusion_matrix(y_test_small,mlp_prediction,'TFIDF: MLP ')
+display(pd.DataFrame( mlp_cv.cv_results_))
+\end{minted}
+\subsection{fine-tune کردن MLP با استفاده از داده های جدید}
+ میتوان گفت یکی از بهترین مدل ها در فاز قبل مدل MLP است که در اینجا من برای بحث fine-tuning استفاده کرده ام و توانسته است 
+دقت ۸۹ درصدی بگیرد و ۱ درصد دقت را افزایش دهد که به نسبت خوب است. برای این کار از پارامتر warm\_start در مدل MLP استفاده کرده ام. 
+البته همان طور که مشخص است از مدل TFIDF ای که در قبل fit شده است استفاده شده و اینجا صرفا transform انجام شده است. 
+
+\begin{minted}{python}
+X_train_small_tfidf_olddata=vectorizer_tfidf.transform(X_train_small)
+X_test_small_tfidf_olddata = vectorizer_tfidf.transform(X_test_small)
+
+mlp_best = MLPClassifier(warm_start=True)
+mlp_best.fit(X_train_small_tfidf_olddata,y_train_small)
+mlp_prediction=mlp_best.predict(X_test_small_tfidf_olddata)
+print_confusion_matrix(y_test_small,mlp_prediction,'TFIDF: MLP ')
+\end{minted}
+\section{مدل های آموزش داده شده و لینک ها}
+در 
+\href{https://drive.google.com/drive/folders/1D5jG-peWyejoISFjyc0e8d_Y44frkL7f?usp=sharing}{این لینک}
+میتوان تمام مدل های آموزش داده شده و البته برخی representation ها که ذخیره شده اند را پیدا کرد. 
+در
+\href{https://colab.research.google.com/drive/18s13qgUut2uGAMDf2sFACHgbyuzKcymi?usp=sharing}{این لینک}
+هم در واقع فایل کولب تمرین است که در صورت لزوم قابل بررسی است. 
+\end{document}
