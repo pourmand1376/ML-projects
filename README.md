@@ -22,7 +22,7 @@ Theoretical: [[Questions]](HW2/2.pdf) [[Solution]](HW2/ML_HW2_Solution.pdf) [[My
 
 Theoretical: [[Questions]](HW3/Theoretical/3.pdf) [[Solution]](HW3/Theoretical/ML_HW3_Solution.pdf) [[MyAnswers]](HW3/Theoretical/HW3_ML.pdf)
 
-Answer 3.B [[markdown]](HW3/Practical/Exercise 3.B.md) [[html]](HW3/Practical/Exercise 3.B.html) [[pdf]](HW3/Practical/Exercise 3.B.pdf) [[ipynb]](HW3/Practical/Exercise 3.B.ipynb) [[python]](HW3/Practical/Exercise 3.B.py)
+Answer 3.B: [[markdown]](HW3/Practical/Exercise 3.B.md) [[html]](HW3/Practical/Exercise 3.B.html) [[pdf]](HW3/Practical/Exercise 3.B.pdf) [[ipynb]](HW3/Practical/Exercise 3.B.ipynb) [[python]](HW3/Practical/Exercise 3.B.py)
 
 Practical: 
 
@@ -65,12 +65,12 @@ Practical: [[markdown]](HW8/Practical/ML2021S-HW8.md) [[html]](HW8/Practical/ML2
 
 ### Phase 1
 
-[Project Definition](Final_Phase1/Phase1_Definition.pdf) [MyReport](Final_Phase1/ML_Phase1_AmirPourmand_99210259.pdf)
-
-Mycodes: [[markdown]](Final_Phase1/Practical_Phase1.md) [[html]](Final_Phase1/Practical_Phase1.html) [[pdf]](Final_Phase1/Practical_Phase1.pdf) [[ipynb]](Final_Phase1/Practical_Phase1.ipynb) [[python]](Final_Phase1/Practical_Phase1.py)
+- [Project Definition](Final_Phase1/Phase1_Definition.pdf) 
+- [MyReport](Final_Phase1/ML_Phase1_AmirPourmand_99210259.pdf)
+- Mycodes: [[markdown]](Final_Phase1/Practical_Phase1.md) [[html]](Final_Phase1/Practical_Phase1.html) [[pdf]](Final_Phase1/Practical_Phase1.pdf) [[ipynb]](Final_Phase1/Practical_Phase1.ipynb) [[python]](Final_Phase1/Practical_Phase1.py)
 
 ### Phase 2
 
-[Project Definition](Final_Phase2/Phase2_Definition.pdf) [MyReport](Final_Phase2/ML_Report_Phase2_AmirPourmand_99210259.pdf)
-
-Mycodes: [[markdown]](Final_Phase2/Practical_Phase2.md) [[html]](Final_Phase2/Practical_Phase2.html) [[pdf]](Final_Phase2/Practical_Phase2.pdf) [[ipynb]](Final_Phase2/Practical_Phase2.ipynb) [[python]](Final_Phase2/Practical_Phase2.py)
+- [Project Definition](Final_Phase2/Phase2_Definition.pdf) 
+- [MyReport](Final_Phase2/ML_Report_Phase2_AmirPourmand_99210259.pdf)
+- Mycodes: [[markdown]](Final_Phase2/Practical_Phase2.md) [[html]](Final_Phase2/Practical_Phase2.html) [[pdf]](Final_Phase2/Practical_Phase2.pdf) [[ipynb]](Final_Phase2/Practical_Phase2.ipynb) [[python]](Final_Phase2/Practical_Phase2.py)
