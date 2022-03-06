@@ -1,21 +1,23 @@
 # Machine Learning Projects
 
-# [[Videos]](https://www.aparat.com/v/bWr3A)
+# [[Videos]](https://www.aparat.com/v/bWr3A) [[Mynotes]](MyNotes/MachineLearningMidTerm_Abstract.pdf)
 
-## Exams 
+## Exams
 
 Midterm: [[Questions]](Midterm/ML2021S_MidtermExam.pdf) [[Solution]](Midterm/ML2021S-MidtermExam-Solution.pdf) [[MyAnswers]](Midterm/midterm.pdf) 
 
 Final: [[Questions]](FinalExam/ML2021S-FinalExam.pdf) [[Solution]](FinalExam/ML2021S-FinalExam-Solution.pdf) [[MyAnswers]](FinalExam/ML_Final.pdf)
 
 
-## [[Mynotes]](MyNotes/MachineLearningMidTerm_Abstract.pdf)
+
 ## Homeworks
 
-### Homework 1 
+### Homework 1
+
 Theoretical: [[Questions]](HW1/1.pdf) [[Solution]](HW1/ML_HW1_Solution.pdf) [[MyAnswers]](HW1/HW1_ML.pdf)
 
-### Homework 2 
+### Homework 2
+
 Theoretical: [[Questions]](HW2/2.pdf) [[Solution]](HW2/ML_HW2_Solution.pdf) [[MyAnswers]](HW2/HW2_ML.pdf)
 
 ### Homework 3
@@ -23,7 +25,6 @@ Theoretical: [[Questions]](HW2/2.pdf) [[Solution]](HW2/ML_HW2_Solution.pdf) [[My
 Theoretical: [[Questions]](HW3/Theoretical/3.pdf) [[Solution]](HW3/Theoretical/ML_HW3_Solution.pdf) [[MyAnswers]](HW3/Theoretical/HW3_ML.pdf)
 
 Answer 3.B: [[markdown]](HW3/Practical/Exercise3.B.md) [[html]](HW3/Practical/Exercise3.B.html) [[pdf]](HW3/Practical/Exercise3.B.pdf) [[ipynb]](HW3/Practical/Exercise3.B.ipynb) [[python]](HW3/Practical/Exercise3.B.py)
-
 
 Practical: 
 
@@ -61,8 +62,7 @@ Theoretical: [[Questions]](HW8/Theoretical/8.pdf) [[Solution]](HW8/Theoretical/M
 
 Practical: [[markdown]](HW8/Practical/ML2021S-HW8.md) [[html]](HW8/Practical/ML2021S-HW8.html) [[pdf]](HW8/Practical/ML2021S-HW8.pdf) [[ipynb]](HW8/Practical/ML2021S-HW8.ipynb) [[python]](HW8/Practical/ML2021S-HW8.py)
 
-
-## Practical Projects 
+## Practical Projects
 
 ### Phase 1
 
