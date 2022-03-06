@@ -22,7 +22,8 @@ Theoretical: [[Questions]](HW2/2.pdf) [[Solution]](HW2/ML_HW2_Solution.pdf) [[My
 
 Theoretical: [[Questions]](HW3/Theoretical/3.pdf) [[Solution]](HW3/Theoretical/ML_HW3_Solution.pdf) [[MyAnswers]](HW3/Theoretical/HW3_ML.pdf)
 
-Answer 3.B: [[markdown]](HW3/Practical/Exercise 3.B.md) [[html]](HW3/Practical/Exercise 3.B.html) [[pdf]](HW3/Practical/Exercise 3.B.pdf) [[ipynb]](HW3/Practical/Exercise 3.B.ipynb) [[python]](HW3/Practical/Exercise 3.B.py)
+Answer 3.B: [[markdown]](HW3/Practical/Exercise3.B.md) [[html]](HW3/Practical/Exercise3.B.html) [[pdf]](HW3/Practical/Exercise3.B.pdf) [[ipynb]](HW3/Practical/Exercise3.B.ipynb) [[python]](HW3/Practical/Exercise3.B.py)
+
 
 Practical: 
 
